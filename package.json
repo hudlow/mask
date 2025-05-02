@@ -1,0 +1,29 @@
+{
+  "name": "@hudlow/mask",
+  "version": "0.0.1",
+  "author": "Dan Hudlow",
+  "license": "Apache-2.0",
+  "scripts": {
+    "check": "tsc --noEmit -p ./tsconfig.json --strict",
+    "clean": "rm -rf index.ts dist/ generated/ node_modules/ &> /dev/null",
+    "generate-parser": "peggy mask.peggy --format bare --extra-options '{\"typescript\":true}' --plugin peggy-ts -o ./index.ts && prettier index.ts --write",
+    "generate-control-parser": "peggy mask.peggy --format es -o ./index.ts",
+    "generate-parser-ast": "peggy mask.peggy --ast --plugin peggy-ts -o ./index.ast",
+    "bundle-init": "rm -rf dist/ &> /dev/null; mkdir dist",
+    "bundle-cjs": "esbuild index.ts --bundle --format=cjs --outfile=dist/index.cjs && prettier dist/index.cjs --write",
+    "bundle-browser": "echo 'import * as Mask from \"./\"; module.exports = Mask;' | esbuild --bundle --global-name=Mask --outfile=dist/index.js && prettier dist/index.js --write",
+    "bundle": "npm run bundle-init; npm run bundle-cjs; npm run bundle-browser",
+    "prepare": "npm run generate-parser; npm run bundle",
+    "lint": "prettier . --check",
+    "format": "prettier . --write",
+    "test": "jest",
+    "verify": "npm run lint; npm run check; npm test"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "peggy": "^4.0.3",
+    "peggy-ts": "github:hudlow/peggy-ts",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.1"
+  }
+}
